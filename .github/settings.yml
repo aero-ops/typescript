@@ -93,7 +93,7 @@ branches:
       required_status_checks:
         strict: false
         contexts:
-          - 'Required (CI)'
+          - 'check'
 
       enforce_admins: true
       required_linear_history: true
