@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true
+  },
+  "include": [
+    "commitlint.config.cjs"
+  ],
+  "exclude": [
+    "node_modules/"
+  ]
+}
