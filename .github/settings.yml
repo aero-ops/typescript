@@ -1,0 +1,102 @@
+# These settings are synced to GitHub by https://probot.github.io/apps/settings/
+
+repository:
+  # See https://docs.github.com/en/rest/reference/repos#update-a-repository for all available settings.
+
+  # The name of the repository. Changing this will rename the repository
+  name: typescript
+
+  # A short description of the repository that will show up on GitHub
+  description: Standardized TypeScript configuration for AeroOps monorepo projects.
+
+  # A URL with more information about the repository
+  homepage: https://aeroops.github.io
+
+  # A comma-separated list of topics to set on the repository
+  topics: typescript, aeroops, configuration
+
+  # Either `true` to make the repository private, or `false` to make it public.
+  private: false
+
+  # Either `true` to enable issues for this repository, `false` to disable them.
+  has_issues: false
+
+  # Either `true` to enable projects for this repository, or `false` to disable them.
+  # If projects are disabled for the organization, passing `true` will cause an API error.
+  has_projects: false
+
+  # Either `true` to enable the wiki for this repository, `false` to disable it.
+  has_wiki: false
+
+  # Either `true` to enable downloads for this repository, `false` to disable them.
+  has_downloads: true
+
+  # Updates the default branch for this repository.
+  default_branch: main
+
+  # Either `true` to allow squash-merging pull requests, or `false` to prevent
+  # squash-merging.
+  allow_squash_merge: true
+
+  # Either `true` to allow merging pull requests with a merge commit, or `false`
+  # to prevent merging pull requests with merge commits.
+  allow_merge_commit: true
+
+  # Either `true` to allow rebase-merging pull requests, or `false` to prevent
+  # rebase-merging.
+  allow_rebase_merge: true
+
+  # Either `true` to enable automatic deletion of branches on merge, or `false` to disable
+  delete_branch_on_merge: true
+
+  # Either `true` to enable automated security fixes, or `false` to disable
+  # automated security fixes.
+  enable_automated_security_fixes: true
+
+  # Either `true` to enable vulnerability alerts, or `false` to disable
+  # vulnerability alerts.
+  enable_vulnerability_alerts: true
+
+# Labels used to categorize pull requests.
+labels:
+  - name: bug
+    color: '#B60205'
+    description: Fixes incorrect behavior or a regression.
+
+  - name: ci
+    color: '#D4C5F9'
+    description: Changes GitHub Actions or other CI configuration.
+
+  - name: dependencies
+    color: '#0366D6'
+    description: Updates development dependencies.
+
+  - name: github-actions
+    color: '#1D76DB'
+    description: Updates GitHub Actions dependencies.
+
+  - name: release
+    color: '#FBCA04'
+    description: Changes versioning or release automation.
+
+branches:
+  - name: main
+    protection:
+      # Require pull requests without requiring an approving review.
+      required_pull_request_reviews:
+        required_approving_review_count: 0
+        dismiss_stale_reviews: false
+        require_code_owner_reviews: false
+        dismissal_restrictions: {}
+
+      # Keep this context aligned with .github/ruleset.json.
+      required_status_checks:
+        strict: false
+        contexts:
+          - 'Required (CI)'
+
+      enforce_admins: true
+      required_linear_history: true
+      allow_force_pushes: false
+      allow_deletions: false
+      restrictions: null
