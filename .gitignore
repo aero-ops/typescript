@@ -1,0 +1,8 @@
+# Node Modules
+node_modules/
+
+# TypeScript
+*.tsbuildinfo
+
+# Git Hooks
+.husky/
