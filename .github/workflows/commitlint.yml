@@ -26,4 +26,4 @@ jobs:
         run: bun install --frozen-lockfile --skip-scripts
 
       - name: Validate commit history
-        run: bunx commitlint --from=main --to=HEAD --verbose
+        run: bunx commitlint --from=origin/main --to=HEAD --verbose
