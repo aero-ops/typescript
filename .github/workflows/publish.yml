@@ -1,0 +1,119 @@
+# Publishes the package to npm whenever release-please publishes a GitHub
+# release (i.e. when the release PR lands on main).
+#
+# release-please runs with `release-type: simple`, which tags and creates the
+# release but never writes `version` into package.json. The published version is
+# therefore derived from the release tag (vX.Y.Z -> X.Y.Z) right before publish.
+#
+# One-time setup on npmjs.com, required once per package:
+#   npmjs.com/package/@aero-ops/typescript/access
+#   -> Add Trusted Publisher -> GitHub Actions
+#      Organization or user:  aero-ops
+#      Repository:            typescript
+#      Workflow filename:     publish.yml   (filename only, no path)
+#      Allowed actions:       npm publish
+# There is no NPM_TOKEN: this workflow authenticates through OIDC
+# (`id-token: write`), which npm requires at CLI 11.5.1+ / Node 22.14.0+.
+# Provenance attestations are emitted automatically by trusted publishing and
+# are not requested with --provenance.
+
+name: Publish Package
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  # Required by npm trusted publishing (OIDC). Without it npm returns ENEEDAUTH.
+  id-token: write
+
+concurrency:
+  group: publish-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish to npm
+    # Prereleases stay on GitHub only; they are never pushed to npm.
+    if: ${{ !github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Resolve version from release tag
+        id: version
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          version="${TAG_NAME#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Tag '$TAG_NAME' is not a vMAJOR.MINOR.PATCH release tag."
+            exit 1
+          fi
+          echo "Publishing version $version"
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout release tag
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          # Never cache in a release build, and let npm use its default
+          # registry instead of a generated .npmrc holding an auth placeholder.
+          package-manager-cache: false
+
+      - name: Ensure npm supports trusted publishing
+        run: |
+          npm install -g npm@latest
+          echo "npm $(npm --version)"
+
+      - name: Check whether the version is already on npm
+        id: registry
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          name="$(npm pkg get name)"
+          echo "Resolved package: $name@$VERSION"
+          if npm view "$name@$VERSION" version > /dev/null 2>&1; then
+            echo "$name@$VERSION is already on npm; nothing to publish."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Sync version and pack
+        if: steps.registry.outputs.skip == 'false'
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          npm pkg set version="$VERSION"
+          # --ignore-scripts: there is no build step, and the `prepare` script
+          # (husky) would fail because devDependencies are not installed here.
+          npm pack --ignore-scripts --pack-destination "$RUNNER_TEMP" > /dev/null
+
+      - name: Verify tarball payload
+        if: steps.registry.outputs.skip == 'false'
+        run: |
+          contents="$(tar -tzf "$RUNNER_TEMP"/*.tgz)"
+          echo "$contents"
+          missing=0
+          for required in package/package.json package/tsconfig.base.json; do
+            if ! grep -qxF "$required" <<< "$contents"; then
+              echo "::error::Missing from tarball: $required"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Publish to npm
+        if: steps.registry.outputs.skip == 'false'
+        # Publishing the verified tarball guarantees the bytes on npm are the
+        # bytes that were inspected above.
+        run: npm publish --ignore-scripts "$RUNNER_TEMP"/*.tgz
