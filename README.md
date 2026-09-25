@@ -1,20 +1,25 @@
 # @aero-ops/typescript
 
-Configuração base de TypeScript compartilhada pelos projetos do monorepo AeroOps.
+Base TypeScript configuration shared by all AeroOps monorepo projects.
 
-Este pacote não contém código de aplicação. Ele publica `tsconfig.base.json` para que projetos TypeScript possam estender uma configuração comum, padronizada e compatível com Bun.
+This package contains no application code. It publishes `tsconfig.base.json` so
+TypeScript projects can extend a single, standardized, Bun-compatible config.
 
-> Este é um pacote interno da AeroOps. Contribuições externas não são aceitas.
+> This is an internal AeroOps package. External contributions are not accepted.
 
-## Uso
+## Usage
 
-Em um projeto com acesso ao registro interno da AeroOps, instale o pacote como dependência de desenvolvimento:
+From a project with access to the internal AeroOps registry, install the
+package as a dev dependency:
 
 ```bash
-bun add --dev @aero-ops/typescript
+bun install -D @aero-ops/typescript
+npm i -D @aero-ops/typescript
+pnpm add -D @aero-ops/typescript
+yarn add -D @aero-ops/typescript
 ```
 
-Depois, estenda a configuração no `tsconfig.json` do projeto:
+Then extend the config in the project's `tsconfig.json`:
 
 ```json
 {
@@ -23,77 +28,91 @@ Depois, estenda a configuração no `tsconfig.json` do projeto:
 }
 ```
 
-Opções específicas do projeto podem ser adicionadas em `compilerOptions` e têm precedência sobre as opções da configuração base.
+Project-specific options can be added under `compilerOptions` and take
+precedence over the base config.
 
-Como a configuração define `"types": ["bun"]`, os tipos do Bun precisam estar disponíveis no projeto consumidor. Instale `@types/bun` como dependência de desenvolvimento quando necessário.
+Because the config sets `"types": ["bun"]`, Bun's types must be available in the
+consuming project. Install `@types/bun` as a dev dependency when needed:
 
-## Configuração compartilhada
+```bash
+bun install -D @types/bun
+npm i -D @types/bun
+pnpm add -D @types/bun
+yarn add -D @types/bun
+```
 
-`tsconfig.base.json` aplica as seguintes regras:
+## Shared configuration
 
-| Opção | Valor | Finalidade |
+`tsconfig.base.json` applies the following rules:
+
+| Option | Value | Purpose |
 | --- | --- | --- |
-| `target` | `ESNext` | Usa os recursos mais recentes do JavaScript. |
-| `module` | `ESNext` | Mantém a saída de módulos ES. |
-| `moduleResolution` | `bundler` | Resolve módulos de acordo com o comportamento de bundlers. |
-| `allowImportingTsExtensions` | `true` | Permite imports com extensão `.ts`. |
-| `noEmit` | `true` | Impede a geração de arquivos JavaScript. |
-| `incremental` | `true` | Permite cacheamento incremental de verificações. |
-| `lib` | `ESNext` | Habilita as bibliotecas padrão mais recentes. |
-| `verbatimModuleSyntax` | `true` | Mantém imports e exports alinhados à sintaxe usada no código. |
-| `strict` | `true` | Ativa as verificações estritas do TypeScript. |
-| `skipLibCheck` | `true` | Evita verificações dentro dos arquivos de declaração de dependências. |
-| `resolveJsonModule` | `true` | Permite importar arquivos JSON. |
-| `experimentalDecorators` | `true` | Habilita decorators experimentais. |
-| `emitDecoratorMetadata` | `true` | Gera metadados de decorators quando houver emissão. |
-| `allowSyntheticDefaultImports` | `true` | Permite imports default sintéticos. |
-| `esModuleInterop` | `true` | Melhora a interoperabilidade entre módulos CommonJS e ES modules. |
-| `forceConsistentCasingInFileNames` | `true` | Exige nomes de arquivos com casing consistente entre sistemas. |
-| `isolatedModules` | `true` | Garante que cada arquivo possa ser transpilado isoladamente. |
-| `noUncheckedIndexedAccess` | `true` | Considera possíveis valores `undefined` ao acessar índices. |
-| `noUnusedLocals` | `true` | Reporta variáveis e importações sem uso. |
-| `noUnusedParameters` | `true` | Reporta parâmetros sem uso. |
-| `noFallthroughCasesInSwitch` | `true` | Impede casos `switch` com fallthrough não intencional. |
-| `noImplicitOverride` | `true` | Exige `override` ao sobrescrever métodos. |
-| `types` | `["bun"]` | Inclui os tipos globais do Bun. |
+| `target` | `ESNext` | Uses the latest JavaScript features. |
+| `module` | `ESNext` | Keeps the output as ES modules. |
+| `moduleResolution` | `bundler` | Resolves modules the way bundlers do. |
+| `allowImportingTsExtensions` | `true` | Allows imports with the `.ts` extension. |
+| `noEmit` | `true` | Prevents JavaScript output from being generated. |
+| `incremental` | `true` | Allows incremental caching of type checks. |
+| `lib` | `ESNext` | Enables the latest standard libraries. |
+| `verbatimModuleSyntax` | `true` | Keeps imports and exports aligned with the syntax used in the code. |
+| `strict` | `true` | Turns on TypeScript's strict checks. |
+| `skipLibCheck` | `true` | Skips type checking of dependency declaration files. |
+| `resolveJsonModule` | `true` | Allows importing JSON files. |
+| `experimentalDecorators` | `true` | Enables experimental decorators. |
+| `emitDecoratorMetadata` | `true` | Emits decorator metadata whenever there is output. |
+| `allowSyntheticDefaultImports` | `true` | Allows synthetic default imports. |
+| `esModuleInterop` | `true` | Improves interoperability between CommonJS and ES modules. |
+| `forceConsistentCasingInFileNames` | `true` | Requires file names to be cased consistently across systems. |
+| `isolatedModules` | `true` | Ensures every file can be transpiled on its own. |
+| `noUncheckedIndexedAccess` | `true` | Accounts for possible `undefined` values when indexing. |
+| `noUnusedLocals` | `true` | Reports unused variables and imports. |
+| `noUnusedParameters` | `true` | Reports unused parameters. |
+| `noFallthroughCasesInSwitch` | `true` | Prevents unintentional `switch` fallthrough. |
+| `noImplicitOverride` | `true` | Requires `override` when overriding methods. |
+| `types` | `["bun"]` | Includes Bun's global types. |
 
-## Desenvolvimento
+## Development
 
-Pré-requisitos:
+Prerequisites:
 
 - Git
 - Bun
 
-Instale as dependências e execute a verificação de tipos:
+Install the dependencies and run the type check:
 
 ```bash
 bun install
 bun run check-types
 ```
 
-Para validar os commits conventional em relação à `main`:
+To validate Conventional Commits against `main`:
 
 ```bash
 bun run lint:commit
 ```
 
-O repositório usa [Conventional Commits](https://www.conventionalcommits.org/) e commitlint. Exemplos:
+This repository follows [Conventional Commits](https://www.conventionalcommits.org/)
+and commitlint. Examples:
 
 ```text
-fix(base): corrig moduleResolution
-docs: atualizar instruções de uso
-chore: atualizar dependências
+fix(base): correct moduleResolution setting
+docs: update usage instructions
+chore: bump dependencies
 ```
 
-Leia [CONTRIBUTING.md](./CONTRIBUTING.md) para mais detalhes sobre o fluxo de contribuição.
+Commit messages must be written in English, including the subject, body, and
+optional scope.
 
-## Estrutura
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) for the full contribution flow.
 
-- `tsconfig.base.json`: configuração distribuída para os projetos consumidores.
-- `tsconfig.json`: configuração usada para verificar este próprio repositório.
-- `package.json`: metadados, exportação e scripts do pacote.
-- `release-please-config.json`: configuração dos releases automatizados.
+## Structure
 
-## Licença
+- `tsconfig.base.json`: the config shipped to consuming projects.
+- `tsconfig.json`: the config used to type-check this repository itself.
+- `package.json`: package metadata, exports, and scripts.
+- `release-please-config.json`: automated release configuration.
 
-Este projeto é proprietário e está sob os termos descritos no [LICENSE](./LICENSE). Todos os direitos são reservados à AeroOps.
+## License
+
+This project is proprietary and is governed by the terms described in
+[LICENSE](./LICENSE). All rights reserved by AeroOps.
