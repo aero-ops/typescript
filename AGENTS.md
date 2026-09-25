@@ -66,6 +66,13 @@ explicitly asks for the repo's scope to grow.
   minor, `fix`/`perf` → patch, pre-1.0 semantics per
   `release-please-config.json`). Don't hand-edit `CHANGELOG.md` or the
   manifest.
+- **Publishing to npm:** `.github/workflows/publish.yml` runs on
+  `release: published`. Because release-please uses `release-type: simple`, it
+  never writes `version` into `package.json`; the workflow derives the version
+  from the release tag and sets it before packing. Auth is npm trusted
+  publishing (OIDC) — there is no `NPM_TOKEN`, and the trusted publisher must be
+  registered once on npmjs.com (workflow filename `publish.yml`). Prereleases
+  are skipped.
 - **Style:** no semicolons is not enforced here (no formatter config exists
   yet); follow `.editorconfig` and match existing file style. Keep
   `package.json`/config JSON files minimal and hand-readable.
@@ -102,6 +109,8 @@ A change is done when:
 
 - Never bypass commitlint or skip git hooks.
 - Never hand-edit `.release-please-manifest.json` or `CHANGELOG.md`.
+- Never re-add `"private": true` to `package.json` — npm refuses to publish a
+  private package, and it would break the publish workflow.
 - Don't scaffold `apps/`, `packages/`, tests, or CI workflows into this repo
   on your own initiative — its scope is intentionally limited to shared
   TypeScript config. If a task seems to require more, confirm with the user

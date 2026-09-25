@@ -1,9 +1,20 @@
 {
   "name": "@aero-ops/typescript",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "description": "Shared TypeScript configs for AeroOps monorepo projects",
+  "license": "UNLICENSED",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aero-ops/typescript.git"
+  },
+  "homepage": "https://github.com/aero-ops/typescript#readme",
+  "bugs": {
+    "url": "https://github.com/aero-ops/typescript/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "tsconfig.base.json"
   ],
